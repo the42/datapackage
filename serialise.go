@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+const ISO8601Format1 = "2006-01-02"
+const ISO8601Format2 = "2006-01-02T15:04:05Z"
+
 func (t *ISO8601) UnmarshalJSON(data []byte) error {
 	var raw string
 	if err := json.Unmarshal(data, &raw); err != nil {
@@ -21,6 +24,11 @@ func (t *ISO8601) UnmarshalJSON(data []byte) error {
 	}
 	t.Time = pt
 	return nil
+}
+
+func (t *ISO8601) MarshalJSON() ([]byte, error) {
+	s := t.Time.UTC().Format(ISO8601Format2)
+	return json.Marshal(s)
 }
 
 func (pk *PKSpec) UnmarshalJSON(data []byte) error {

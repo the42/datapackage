@@ -57,11 +57,9 @@ type JSONTableSchema struct {
 	PrimaryKey *PKSpec     `json:"primaryKey"`
 }
 
-const ISO8601Format1 = "2006-01-02"
-const ISO8601Format2 = "2006-01-02T15:04:05"
 type ISO8601 struct {
-	Raw  string
-	Time time.Time
+	Raw string
+	time.Time
 }
 
 type Source struct {
@@ -81,7 +79,7 @@ type Resource struct {
 	// Optional fields
 	Format    *string     `json:"format"`
 	Mediatype *string     `json:"mediatype"`
-	Bytes     *int        `json:"bytes"`
+	Bytes     *int64      `json:"bytes"`
 	Hash      *string     `json:"hash"`
 	Modified  *ISO8601    `json:"modified"`
 	Schema    interface{} `json:"schema"` // TODO: Describe here
