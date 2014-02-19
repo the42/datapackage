@@ -8,6 +8,11 @@ import (
 	"path/filepath"
 )
 
+const (
+	PackRecurse  = 1 << iota
+	PackCalcHash = 1 << iota
+)
+
 type Packer struct {
 	Visiter
 	w        *bufio.Writer
@@ -121,6 +126,8 @@ func (p *Packer) TearDown() error {
 	return p.f.Close()
 }
 
-func NewPacker(recurse, calchash bool) *Packer {
-	return &Packer{calchash: calchash, recurse: recurse}
+// NewPacker initialises a new datapackage Packer. The operation mode has to be
+// provided using the Pack... constants
+func NewPacker(om int) *Packer {
+	return &Packer{calchash: om&PackCalcHash == 1, recurse: om&PackRecurse == 1}
 }

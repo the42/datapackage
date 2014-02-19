@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	p := datapackage.NewPacker(true, true)
+	p := datapackage.NewPacker(datapackage.PackRecurse | datapackage.PackCalcHash)
 	err := datapackage.Visit(".", p)
 	if err != nil {
 		fmt.Println(err)
