@@ -50,7 +50,6 @@ func processFile(path string, info os.FileInfo, calc_hash bool) (*Resource, erro
 	if res.Mediatype == nil {
 		// TODO: try to determine the media type by eg. unix `file`?
 	}
-
 	if calc_hash {
 		if rawdata == nil {
 			rdata, err := ioutil.ReadFile(path)
@@ -130,5 +129,5 @@ func (p *Packer) TearDown() error {
 // NewPacker initialises a new datapackage Packer. The operation mode has to be
 // provided using the Pack... constants
 func NewPacker(om int) *Packer {
-	return &Packer{calchash: om&PackCalcHash == 1, recurse: om&PackRecurse == 1}
+	return &Packer{calchash: om&PackCalcHash != 0, recurse: om&PackRecurse != 0}
 }
