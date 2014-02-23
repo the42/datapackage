@@ -23,10 +23,10 @@ type FieldSpec struct {
 	// Required
 	Name *string `json:"name"`
 	// Optional
-	Title       *string `json:"title"`
-	Description *string `json:"discription"`
-	Format      *string `json:"format"`
-	Type        *string `json:"type"`
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"discription,omitempty"`
+	Format      *string `json:"format,omitempty"`
+	Type        *string `json:"type,omitempty"`
 }
 
 var JSONTableTypes = []string{
@@ -54,7 +54,7 @@ type PKSpec struct {
 // JSONTableSchema specification as of http://dataprotocols.org/json-table-schema/
 type JSONTableSchema struct {
 	Fields     []FieldSpec `json:"fields"`
-	PrimaryKey *PKSpec     `json:"primaryKey"`
+	PrimaryKey *PKSpec     `json:"primaryKey,omitempty"`
 }
 
 type ISO8601 struct {
@@ -63,28 +63,28 @@ type ISO8601 struct {
 }
 
 type Source struct {
-	Name  *string `json:"name"`
-	Web   *string `json:"web"`
-	Email *string `json:"email"`
+	Name  *string `json:"name,omitempty"`
+	Web   *string `json:"web,omitempty"`
+	Email *string `json:"email,omitempty"`
 }
 
 type Resource struct {
 	// BEGIN:one of the following is required
-	Url  *string     `json:"url"`
-	Path *string     `json:"path"`
-	Data interface{} `json:"data"`
+	Url  *string     `json:"url,omitempty"`
+	Path *string     `json:"path,omitempty"`
+	Data interface{} `json:"data,omitempty"`
 	// END
 	// Recommended fields
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// Optional fields
-	Format    *string     `json:"format"`
-	Mediatype *string     `json:"mediatype"`
-	Bytes     *int64      `json:"bytes"`
-	Hash      *string     `json:"hash"`
-	Modified  *ISO8601    `json:"modified"`
-	Schema    interface{} `json:"schema"` // TODO: Describe here
-	Sources   []Source    `json:"sources"`
-	Licenses  []License   `json:"license"`
+	Format    *string     `json:"format,omitempty"`
+	Mediatype *string     `json:"mediatype,omitempty"`
+	Bytes     *int64      `json:"bytes,omitempty"`
+	Hash      *string     `json:"hash,omitempty"`
+	Modified  *ISO8601    `json:"modified,omitempty"`
+	Schema    interface{} `json:"schema,omitempty"` // TODO: Describe here
+	Sources   []Source    `json:"sources,omitempty"`
+	Licenses  []License   `json:"license,omitempty"`
 }
 
 type License struct {
@@ -101,17 +101,17 @@ type Datapackage struct {
 	Licenses            []License  `json:"license"`
 	Datapackage_Version *string    `json:"datapackage_version"`
 	// Recommended Fields
-	Title            *string     `json:"title"`
-	Description      *string     `json:"description"`
-	Homepage         *string     `json:"homepage"`
-	Version          *string     `json:"version"`
-	Sources          []Source    `json:"sources"`
-	Keywords         []string    `json:"keywords"`
-	Last_Modified    *ISO8601    `json:"last_modified"`
-	Image            *string     `json:"image"`
-	Maintainers      []Source    `json:"maintainers"`
-	Contributors     []Source    `json:"contributors"`
-	Publisher        []Source    `json:"publisher"`
-	Base             *string     `json:"base"`
-	DataDependencies interface{} `json:"dataDependencies"`
+	Title            *string     `json:"title,omitempty"`
+	Description      *string     `json:"description,omitempty"`
+	Homepage         *string     `json:"homepage,omitempty"`
+	Version          *string     `json:"version,omitempty"`
+	Sources          []Source    `json:"sources,omitempty"`
+	Keywords         []string    `json:"keywords,omitempty"`
+	Last_Modified    *ISO8601    `json:"last_modified,omitempty"`
+	Image            *string     `json:"image,omitempty"`
+	Maintainers      []Source    `json:"maintainers,omitempty"`
+	Contributors     []Source    `json:"contributors,omitempty"`
+	Publisher        []Source    `json:"publisher,omitempty"`
+	Base             *string     `json:"base,omitempty"`
+	DataDependencies interface{} `json:"dataDependencies,omitempty"`
 }
