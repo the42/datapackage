@@ -75,7 +75,7 @@ func main() {
 			os.Exit(1)
 		}
 		fmt.Println(subcommands[subcmd[0]])
-		f.Usage()  // TODO: segfaults here, why?
+		f.Usage()
 		os.Exit(1)
 	default:
 		f, fs := initflags(subcmd)
@@ -84,13 +84,9 @@ func main() {
 			flag.Usage()
 			os.Exit(1)
 		}
-		if e := f.Parse(os.Args[2:]); e != nil {
-			fmt.Printf("Cannot parse command line arguments: %s", e)
-			os.Exit(2)
-		}
 		switch subcmd[0] {
 		case "pack":
-			ps := fs.(pack)
+			ps := fs.(*pack)
 			var iflag int
 			if *ps.md5 {
 				iflag |= datapackage.PackCalcHash
