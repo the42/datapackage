@@ -11,6 +11,7 @@ import (
 const (
 	PackRecurse  = 1 << iota
 	PackCalcHash = 1 << iota
+	PackInline   = 1 << iota
 )
 
 type Packer struct {
