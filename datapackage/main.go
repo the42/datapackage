@@ -95,7 +95,7 @@ func main() {
 				iflag |= datapackage.PackRecurse
 			}
 			if *ps.inline {
-				iflag |= datapackage.PackInline
+				iflag |= datapackage.PackInlineData
 			}
 			p := datapackage.NewPacker(iflag)
 			// TODO: get files from command line

@@ -3,25 +3,25 @@ package datapackage
 import (
 	"bufio"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 const (
-	PackRecurse  = 1 << iota
-	PackCalcHash = 1 << iota
-	PackInline   = 1 << iota
+	PackRecurse    = 1 << iota
+	PackCalcHash   = 1 << iota
+	PackInlineData = 1 << iota
 )
 
 type Packer struct {
 	Visiter
 	w        *bufio.Writer
 	f        *os.File
-	recurse  bool
 	data     Datapackage
 	pattern  []string
 	calchash bool
+	recurse  bool
+	inline   bool
 }
 
 func newString(s string) *string {
@@ -29,7 +29,7 @@ func newString(s string) *string {
 	return &st
 }
 
-func processFile(path string, info os.FileInfo, calc_hash bool) (*Resource, error) {
+func processFile(path string, info os.FileInfo, calc_hash, inline bool) (*Resource, error) {
 	res := &Resource{}
 	var rawdata *[]byte
 
@@ -42,23 +42,41 @@ func processFile(path string, info os.FileInfo, calc_hash bool) (*Resource, erro
 	size := info.Size()
 	res.Bytes = &size
 
+	// specialized handling of data types
 	switch ext {
 	case "csv":
 		res.Mediatype = newString("text/csv")
 	}
 
+	// generic handling of data types. requires checking if struct members
+	// have already been set in the specialized handling above
+
 	if res.Mediatype == nil {
 		// TODO: try to determine the media type by eg. unix `file`?
 	}
+
 	if calc_hash {
-		if rawdata == nil {
-			rdata, err := ioutil.ReadFile(path)
-			if err != nil {
-				return nil, err
-			}
-			rawdata = &rdata
-		}
+		rawdata, _ = lazyGetData(path, rawdata)
 		res.Hash = newString(MD5SumforData(*rawdata))
+	}
+
+	if inline && res.Data == nil {
+		rawdata, _ = lazyGetData(path, rawdata)
+
+		if ext == "json" {
+			// if the data is already json, include it verbatim;
+			// no sanity check is happening here; if the input is corrupt,
+			// the resulting datapackage file will be corrupt too
+
+			// An intermediate variable is necessary as json.Mashal requires a pointer receiver
+			// see http://code.google.com/p/go/issues/detail?id=6528
+			imed := json.RawMessage(*rawdata)
+			res.Data = &imed
+		} else {
+			// otherwise base64 encode it. The JSON-serializer will base64 encode our []byte stream
+			// so no explicit encoding necessary here
+			res.Data = rawdata
+		}
 	}
 
 	res.Modified = &ISO8601{Time: info.ModTime()}
@@ -96,7 +114,7 @@ func (p *Packer) walkerFunc(path string, info os.FileInfo, err error) error {
 	}
 
 	if match {
-		res, err := processFile(path, info, p.calchash)
+		res, err := processFile(path, info, p.calchash, p.inline)
 		if err != nil {
 			return err
 		}
@@ -129,5 +147,9 @@ func (p *Packer) TearDown() error {
 // NewPacker initialises a new datapackage Packer. The operation mode has to be
 // provided using the Pack... constants
 func NewPacker(om int) *Packer {
-	return &Packer{calchash: om&PackCalcHash != 0, recurse: om&PackRecurse != 0}
+	return &Packer{
+		calchash: om&PackCalcHash != 0,
+		recurse:  om&PackRecurse != 0,
+		inline:   om&PackInlineData != 0,
+	}
 }
